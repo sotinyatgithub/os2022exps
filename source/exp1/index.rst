@@ -250,8 +250,59 @@ start.s源码
 调试支持
 --------------------------
 
+编译成功后就可以运行，这需要使用前面安装的QEMU模拟器。此外，为了查找并修正bug，我们需要使用调试工具。
+
+QEMU进入调试，启动调试服务器，默认端口1234
+::
+	qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os -S -s
+
+启动调试客户端
+::
+	aarch64-none-elf-gdb target/aarch64-unknown-none-softfloat/debug/rui_armv8_os
+
+设置调试参数，开始调试
+::
+	(gdb) target remote localhost:1234 #connect from localhost:1234
+	(gdb) disassemble 
+	(gdb) n
+
+.. hint:: 可以使用GDB dashboard进入可视化调试界面
+
+将调试集成到vscode
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+打开一个.rs文件，点击 vscode左侧的运行和调试按钮，弹出对话框选择创建 launch.json文件，增加如下配置：
+::
+	{
+
+	    "name": "aarch64-gdb",
+	    "type": "cppdbg",
+	    "request": "launch",
+	    "program": "${workspaceFolder}/target/aarch64-unknown-none-softfloat/debug/rui_armv8_os",
+	    "stopAtEntry": true,
+	    "cwd": "${fileDirname}",
+	    "environment": [],
+	    "externalConsole": false,
+	    "launchCompleteCommand": "exec-run",
+	    "MIMode": "gdb",
+	    "miDebuggerPath": "/usr/local/bin/aarch64-none-elf-gdb",
+	    "miDebuggerServerAddress": "localhost:1234",
+	    "setupCommands": [
+	        {
+	            "description": "Enable pretty-printing for gdb",
+	            "text": "-enable-pretty-printing",
+	            "ignoreFailures": true
+	        }
+	    ]     
+	},
+
+在左边面板顶部选择刚添加的 aarch64-gdb 选项，点击旁边的绿色 开始调试（F5） 按钮开始调试。
+
+.. image:: vscode-debug.png
+
+qemu执行结果
+
+.. image:: qemu-result.png
 
 
-.. chyyuu
-  这是注释：我觉得需要给出执行环境（EE），Task，...等的描述。
-  并且有一个图，展示这些概念的关系。
+
