@@ -56,7 +56,7 @@
 安装QEMU模拟器
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-请参考 https://wiki.qemu.org/Hosts/Mac 或者 https://wiki.qemu.org/Hosts/Mac
+请参考官网 https://wiki.qemu.org/Hosts/Mac 或者 https://wiki.qemu.org/Hosts/Mac 等进行安装。
 
 
 安装交叉编译工具链 (aarch64)
@@ -123,6 +123,8 @@ main.rs源码
 	#![no_std]表示不使用标准库，因为标准库需要系统支持，而我们需要构建操作系统，所以构建裸金属（Bare Metal）程序。
 
 	#[no_mangle]指示编译器不修改函数名not_main，因为默认情况下编译器会修改函数名，而在start.s中_start中会通过bl not_main进行调用。
+
+	not_main函数通过ptr::write_volatile向串口输出字符，其原理将在 :doc:`../exp2/index` 进行介绍。
 
 panic.rs源码
 
