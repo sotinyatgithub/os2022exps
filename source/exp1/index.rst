@@ -20,13 +20,13 @@
 	source $HOME/.cargo/env
 	cargo install cargo-binutils rustfilt
 
-如果你想安装指定的版本：
+如果你想安装指定的版本，如nightly-2018-01-09：
 ::
 	rustup install nightly-2018-01-09
 
 
 .. attention:: 
-	可以将rust默认设置为stable或nightly版本
+	本系列实验需要nightly版本，可以将rust默认设置为stable或nightly版本
 	::
 		rustup default stable
 		rustup default nightly
@@ -38,7 +38,8 @@
 ::
 	rustc -V
 
-如果你使用 Visual Studio Code，强烈推荐你安装 `Rust Analyzer 扩展 <https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer>`_
+.. hint::
+	如果你使用 Visual Studio Code，强烈推荐你安装 `Rust Analyzer 扩展 <https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer>`_
 
 为rust增加armv8支持
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -84,6 +85,9 @@ Mac
 ::
 	cargo new rui_armv8_os --bin --edition 2021
 
+.. tip::
+	rui_armv8_os为项目名，可自行修改。
+
 
 在src/下创建main.rs, panic.rs, start.s三个文件
 
@@ -104,7 +108,7 @@ main.rs源码
 
 	global_asm!(include_str!("start.s"));
 
-	#[no_mangle] // 不重整函数名
+	#[no_mangle] // 不修改函数名
 	pub extern "C" fn not_main() {
 	    const UART0: *mut u8 = 0x0900_0000 as *mut u8;
 	    let out_str = b"AArch64 Bare Metal";
@@ -115,11 +119,15 @@ main.rs源码
 	    }
 	}
 
+.. note::
+	#![no_std]表示不使用标准库，因为标准库需要系统支持，而我们需要构建操作系统，所以构建裸金属（Bare Metal）程序。
+
+	#[no_mangle]指示编译器不修改函数名not_main，因为默认情况下编译器会修改函数名，而在start.s中_start中会通过bl not_main进行调用。
+
 panic.rs源码
 
 .. code-block:: rust
     :linenos:
-
 
 	use core::panic::PanicInfo;
 
@@ -151,10 +159,13 @@ start.s源码
 		ldr     x0, =PSCI_SYSTEM_OFF
 		hvc     #0	
 
+.. note::
+	_start设置好栈指针后，通过bl not_main跳转到main.rs中对应函数。 
+
+	LD_STACK_PTR是全局符号，在下面的aarch64-qemu.ld中定义。
 
 创建链接文件aarch64-qemu.ld
 ::
-
 	ENTRY(_start)
 	SECTIONS
 	{
@@ -170,6 +181,31 @@ start.s源码
 	    LD_STACK_PTR = .;
 	}
 
+.. note::
+	ENTRY(_start)中指明入口函数为_start函数，该函数在start.s中。
+
+	通过 . = 0x40080000; 将程序安排在内存位置0x40080000开始的地方。
+
+	链接脚本中的符号LD_STACK_PTR是全局符号，可以在程序中使用，这里定义的是栈底位置。
+
+
+.. note::
+	gcc -v参数可以看到在编译 C 代码时，分别调用了 CPP、CC1、AS、COLLECT2 这四类编译工具，分别对应 预编译、编译、汇编、链接 这四个过程。
+
+	在编译的时候尤其是在编写 Makefile 脚本的时候，需要注意 CPP 是预编译器，而不是 C++ 的意思，C++ 通常用 CXX 表示，这里有很多人会搞混。
+
+	链接脚本中除了组织各个段之外，还可以定义符号，链接脚本中定义的符号被添加到全局符号中
+
+	symbol = expression ; symbol += expression ;第一个表达式表示定义一个符号，第二个表达式对符号值进行操作，中间的空格是必须的
+
+	当程序和链接脚本中同时定义了变量符号时，链接脚本中的符号会覆盖掉程序中定义的符号
+
+	定义内存区域后，一个段没有显示地指定将要添加到哪个区域,将会对段的属性和区域的属性进行匹配
+
+	详情可参考 `The GNU linker <https://ftp.gnu.org/old-gnu/Manuals/ld-2.9.1/html_mono/ld.html>`_。此外，这里还有一个简单的 `链接脚本基本介绍 <https://zhuanlan.zhihu.com/p/363308789>`_ 可参考。
+
+.. important::
+	链接脚本对操作系统非常重要，所以需要及早熟悉。
 
 配置Cargo.toml
 ::
@@ -266,7 +302,7 @@ QEMU进入调试，启动调试服务器，默认端口1234
 	(gdb) disassemble 
 	(gdb) n
 
-.. hint:: 可以使用GDB dashboard进入可视化调试界面
+.. hint:: 可以安装使用GDB dashboard进入可视化调试界面
 
 将调试集成到vscode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -297,6 +333,9 @@ QEMU进入调试，启动调试服务器，默认端口1234
 	},
 
 在左边面板顶部选择刚添加的 aarch64-gdb 选项，点击旁边的绿色 开始调试（F5） 按钮开始调试。
+
+.. hint::
+	集成到vscode的调试方法不支持调试类似start.s的汇编代码，如需要调试.s文件，需采用最开始的基础调试方法。
 
 .. image:: vscode-debug.png
 
