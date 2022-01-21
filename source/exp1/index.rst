@@ -82,7 +82,7 @@ Mac
 
 创建新项目：
 ::
-	cargo new rui_armv8_os -bin
+	cargo new rui_armv8_os --bin --edition 2021
 
 
 在src/下创建main.rs, panic.rs, start.s三个文件
@@ -262,7 +262,7 @@ QEMU进入调试，启动调试服务器，默认端口1234
 
 设置调试参数，开始调试
 ::
-	(gdb) target remote localhost:1234 #connect from localhost:1234
+	(gdb) target remote localhost:1234 
 	(gdb) disassemble 
 	(gdb) n
 
