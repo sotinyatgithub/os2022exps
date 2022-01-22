@@ -392,6 +392,20 @@ QEMU进入调试，启动调试服务器，默认端口1234
 
 在左边面板顶部选择刚添加的 aarch64-gdb 选项，点击旁边的绿色 开始调试（F5） 按钮开始调试。
 
+在调试时，可以调试控制台执行gdb命令，如：
+
+.. image:: exec-gdb-cmd.png
+
+- 查看指定地址的内存内容。在调试控制台执行 -exec x/20xw 0x40000000 即可，其中 x表示查看命令，20表示查看数量，x表示格式，可选格式包括 Format letters are o(octal), x(hex), d(decimal), u(unsigned decimal),t(binary), f(float), a(address), i(instruction), c(char) and s(string).Size letters are b(byte), h(halfword), w(word), g(giant, 8 bytes).，最后的 w表示字宽，b表示单字节，h表示双字节，w表示四字节，g表示八字节。还可以是指令：-exec x/20i 0x40000000; 字符串：-exec x/20s 0x40000000
+- 显示所有寄存器。-exec info all-registers
+- 查看寄存器内容。-exec p/x $pc
+- 修改寄存器内容。-exec set $x24 = 0x5
+- 修改指定内存位置的内容。-exec set *(0x800041c as *const u32) = 0x1
+- 修改指定MMIO 寄存器的内容。 -exec call core::ptr::write_volatile(0x08010004 as *const u32, 0x1)
+
+总之，可以通过 -exec这种方式可以执行所有的 gdb调试指令。
+
+
 .. hint::
 	集成到vscode的调试方法不支持调试类似start.s的汇编代码，如需要调试.s文件，需采用最开始的 `GDB简单调试方法`_。
 
