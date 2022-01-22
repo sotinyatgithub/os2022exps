@@ -216,7 +216,7 @@ print函数是学习几乎任何一种软件开发语言时最先学习使用的
     // ...
   }
 
-至此，我们获得了一个基本的输出和调试手段，如我们可以在系统崩溃时调用println!宏进行输出。
+至此，我们获得了一个基本的输出和调试手段，如我们可以在系统崩溃时调用print!或者println!宏进行输出。
 
 我们可以利用print!宏来打印一个文本banner让我们写的OS显得专业一点😁。 `manytools.org <https://manytools.org/hacker-tools/ascii-banner/>`_ 可以创建ascii banner。
 
