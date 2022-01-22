@@ -7,16 +7,19 @@
 
 https://www.devicetree.org/ 旨在促进devicetree标准的发展。其最新的版本为 `设备树规范 v0.4-rc1 <https://github.com/devicetree-org/devicetree-specification/releases/download/v0.4-rc1/devicetree-specification-v0.4-rc1.pdf>`_
 
-设备树是描述硬件的数据结构。 无需将设备的每个细节都硬编码到操作系统中，而是可以在引导时传递给操作系统的数据结构中描述硬件的许多方面。 设备树由 OpenFirmware、OpenPOWER 抽象层 (OPAL)、Power Architecture Platform Requirements (PAPR) 以独立的 Flattened Device Tree (FDT) 形式使用。
+设备树是描述硬件的数据结构。 无需将设备的每个细节都硬编码到操作系统中，可以在引导时通过DTB这种形式的数据结构对硬件的各方面进行描述，然后传递给操作系统从而增强操作系统的灵活性。 设备树由 OpenFirmware、OpenPOWER 抽象层 (OPAL)、Power Architecture Platform Requirements (PAPR) 以独立的 Flattened Device Tree (FDT) 形式使用。
 
-基本上，那些可以动态探测到的设备是不需要描述的，例如USB device。不过对于SOC上的usb host controller，它是无法动态识别的，需要在device tree中描述。同样的道理，在computer system中，PCI device可以被动态探测到，不需要在device tree中描述，但是PCI bridge如果不能被探测，那么就需要描述。
+基本上，那些可以动态探测到的设备是不需要描述的，例如USB device。不过对于SOC上的usb host controller，它是无法动态识别的，需要在device tree中描述。同样的道理，在computer system中，PCI device可以被动态探测到，不需要在device tree中描述，但是PCI bridge如果不能被探测，那么就需要描述 [1]_。
 
 很多系统工具是OS开发过程中自然产生的需求，如将.dtb文件进行解析并转换成可读的.dts格式。
+
+.. [1] http://www.wowotech.net/device_model/dt_basic_concept.html
 
 实验内容
 -----------------------
 
 依据 `设备树规范 <https://github.com/devicetree-org/devicetree-specification/releases/download/v0.4-rc1/devicetree-specification-v0.4-rc1.pdf>`_ 选择你熟悉的语言编写程序解析virt.dtb文件。
+
 
 
 
