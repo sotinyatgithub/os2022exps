@@ -1,7 +1,9 @@
 实验三 设备树（可选）
 =====================
 
-设备树是用于解决ARM等嵌入式系统由于设备种类纷繁复杂导致的与平台相关的大量内核代码被大量重复的问题。通过设备树来描述系统硬件及其属性，然后通过bootLoader将其传递给kernel，以便kernel可以有较大的灵活性。
+设备树是用于解决ARM等嵌入式系统由于设备种类纷繁复杂导致的与平台相关的大量内核代码被大量重复的问题。通过设备树来描述系统硬件及其属性，然后通过bootLoader将其传递给kernel，以便kernel可以有较大的灵活性。如下图所示：
+
+.. image:: dev-tree-example.png
 
 https://www.devicetree.org/ 旨在促进devicetree标准的发展。其最新的版本为 `设备树规范 v0.4-rc1 <https://github.com/devicetree-org/devicetree-specification/releases/download/v0.4-rc1/devicetree-specification-v0.4-rc1.pdf>`_
 
@@ -9,7 +11,7 @@ https://www.devicetree.org/ 旨在促进devicetree标准的发展。其最新的
 
 基本上，那些可以动态探测到的设备是不需要描述的，例如USB device。不过对于SOC上的usb host controller，它是无法动态识别的，需要在device tree中描述。同样的道理，在computer system中，PCI device可以被动态探测到，不需要在device tree中描述，但是PCI bridge如果不能被探测，那么就需要描述。
 
-设计系统工具是OS开发过程中自然产生的需求，如将.dtb文件进行解析并转换成可读的.dts格式。
+很多系统工具是OS开发过程中自然产生的需求，如将.dtb文件进行解析并转换成可读的.dts格式。
 
 实验内容
 -----------------------
