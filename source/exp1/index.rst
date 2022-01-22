@@ -20,9 +20,9 @@
 	source $HOME/.cargo/env
 	cargo install cargo-binutils rustfilt
 
-如果你想安装指定的版本，如nightly-2018-01-09：
+如果你想安装指定的版本，如nightly-2021-11-20：
 ::
-	rustup install nightly-2018-01-09
+	rustup install nightly-2021-11-20
 
 
 .. attention:: 
@@ -207,7 +207,7 @@ start.s源码
 	详情可参考 `The GNU linker <https://ftp.gnu.org/old-gnu/Manuals/ld-2.9.1/html_mono/ld.html>`_。此外，这里还有一个简单的 `链接脚本基本介绍 <https://zhuanlan.zhihu.com/p/363308789>`_ 可参考。
 
 .. important::
-	链接脚本对操作系统非常重要，所以需要及早熟悉。
+	链接脚本对理解操作系统的实现非常重要，所以应及早熟悉。
 
 配置Cargo.toml
 ::
@@ -215,7 +215,7 @@ start.s源码
 	[package]
 	name = "rui_armv8_os"
 	version = "0.1.0"
-	edition = "2018"
+	edition = "2021"
 	authors = ["Rui Li <rui@hnu.edu.cn>"]
 
 	# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -277,12 +277,17 @@ start.s源码
 	}
 
 
-编译项目
+编译运行
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
+编译
 ::
-
 	cargo build --target aarch64-unknown-none-softfloat
+
+运行
+::
+	qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os
+
 
 
 调试支持
@@ -297,6 +302,13 @@ QEMU进入调试，启动调试服务器，默认端口1234
 ::
 	qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os -S -s
 
+.. note::
+	查看相关参数的作用在命令行执行： ``qemu-system-aarch64 --help``， 其中
+
+	-S freeze CPU at startup (use 'c' to start execution)
+
+	-s shorthand for -gdb tcp::1234
+
 启动调试客户端
 ::
 	aarch64-none-elf-gdb target/aarch64-unknown-none-softfloat/debug/rui_armv8_os
@@ -307,7 +319,7 @@ QEMU进入调试，启动调试服务器，默认端口1234
 	(gdb) disassemble 
 	(gdb) n
 
-.. hint:: 可以安装使用GDB dashboard进入可视化调试界面
+.. hint:: 可以安装使用 `GDB dashboard <https://github.com/cyrus-and/gdb-dashboard>`_ 进入可视化调试界面
 
 将调试集成到vscode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
