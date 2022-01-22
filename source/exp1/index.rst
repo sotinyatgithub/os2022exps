@@ -10,7 +10,6 @@
 
 如果你已经安装了一个版本的Rust，需补充安装相关工具： 
 ::
-
 	cargo install cargo-binutils rustfilt
 
 如果你想要全新安装：
@@ -34,7 +33,7 @@
 	::
 		rustup override set nightly
 
-查看当前项目的rust版本
+查看当前项目使用的rust版本
 ::
 	rustc -V
 
@@ -56,11 +55,11 @@
 安装QEMU模拟器
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-请参考官网 https://wiki.qemu.org/Hosts/Mac 或者 https://wiki.qemu.org/Hosts/Mac 等进行安装。
+请参考官网 https://wiki.qemu.org/Hosts/Linux 或者 https://wiki.qemu.org/Hosts/Mac 等进行安装。
 
 
 安装交叉编译工具链 (aarch64)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Linux
 ::
