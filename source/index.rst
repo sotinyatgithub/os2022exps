@@ -9,6 +9,7 @@
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   :hidden:
 
    exp1/index
    exp2/index

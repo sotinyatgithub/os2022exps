@@ -297,7 +297,7 @@ start.s源码
 	  "vendor": ""
 	}
 
-.. hint::
+.. note::
 	pre-link-args参数指定了链接时使用我们先前创建的链接脚本。 
 
 	linker参数指定了所采用的的链接器。
