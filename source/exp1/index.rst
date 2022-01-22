@@ -10,44 +10,44 @@
 
 如果你已经安装了一个版本的Rust，需补充安装相关工具： 
 
-.. code-block::
+.. code-block:: console
 
-	cargo install cargo-binutils rustfilt
+	$ cargo install cargo-binutils rustfilt
 
 如果你想要全新安装：
 
-.. code-block::
+.. code-block:: console
 
-	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-	source $HOME/.cargo/env
-	cargo install cargo-binutils rustfilt
+	$ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	$ source $HOME/.cargo/env
+	$ cargo install cargo-binutils rustfilt
 
 如果你想安装指定的版本，如nightly-2021-11-20：
 
-.. code-block::
+.. code-block:: console
 
-	rustup install nightly-2021-11-20
+	$ rustup install nightly-2021-11-20
 
 
 .. attention:: 
 	本系列实验需要nightly版本，可以将rust默认设置为stable或nightly版本
 
-	.. code-block::
+	.. code-block:: console
 
-		rustup default stable
-		rustup default nightly
+		$ rustup default stable
+		$ rustup default nightly
 
 	或者仅将当前项目设为nightly
 
-	.. code-block::
+	.. code-block:: console
 
-		rustup override set nightly
+		$ rustup override set nightly
 
 查看当前项目使用的rust版本
 
-::
+.. code-block:: console
 
-	rustc -V
+	$ rustc -V
 
 .. hint::
 	如果你使用 Visual Studio Code，强烈推荐你安装 `Rust Analyzer 扩展 <https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer>`_
@@ -57,15 +57,15 @@
 
 列出 rust支持的目标三元组（CPU架构、平台供应者、操作系统和应用程序二进制接口ABI）
 
-.. code-block:: 
+.. code-block:: console
 
-	rustup target list
+	$ rustup target list
 
 增加 armv8支持
 
-.. code-block:: 
+.. code-block:: console
 
-	rustup target add aarch64-unknown-none-softfloat
+	$ rustup target add aarch64-unknown-none-softfloat
 
 
 安装QEMU模拟器
@@ -79,19 +79,19 @@
 
 Linux
 
-.. code-block::
+.. code-block:: console
 
-	wget https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz 
-	tar -xf gcc-arm-10* 
-	cp gcc-arm-10*/bin/aarch64-none-elf-objdump gcc-arm-10*/bin/aarch64-none-elf-readelf gcc-arm-10*/bin/aarch64-none-elf-nm /usr/local/bin/ 
-	rm -rf gcc-arm-10*
+	$ wget https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz 
+	$ tar -xf gcc-arm-10* 
+	$ cp gcc-arm-10*/bin/aarch64-none-elf-objdump gcc-arm-10*/bin/aarch64-none-elf-readelf gcc-arm-10*/bin/aarch64-none-elf-nm /usr/local/bin/ 
+	$ rm -rf gcc-arm-10*
 
 Mac
 
-.. code-block::
+.. code-block:: console
 
-	brew tap SergioBenitez/osxct
-	brew install aarch64-none-elf
+	$ brew tap SergioBenitez/osxct
+	$ brew install aarch64-none-elf
 
 
 创建裸机(Bare Metal)程序
@@ -102,9 +102,9 @@ Mac
 
 创建新项目：
 
-.. code-block::
+.. code-block:: console
 
-	cargo new rui_armv8_os --bin --edition 2021
+	$ cargo new rui_armv8_os --bin --edition 2021
 
 .. tip::
 	rui_armv8_os为项目名，可自行修改。
@@ -307,15 +307,15 @@ start.s源码
 
 编译
 
-.. code-block::
+.. code-block:: console
 
-	cargo build --target aarch64-unknown-none-softfloat
+	$ cargo build --target aarch64-unknown-none-softfloat
 
 运行
 
-.. code-block::
+.. code-block:: console
 
-	qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os
+	$ qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os
 
 
 
@@ -329,9 +329,9 @@ GDB简单调试方法
 
 QEMU进入调试，启动调试服务器，默认端口1234
 
-.. code-block::
+.. code-block:: console
 
-	qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os -S -s
+	$ qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os -S -s
 
 .. note::
 	查看相关参数的作用在命令行执行： ``qemu-system-aarch64 --help``， 其中
@@ -342,9 +342,9 @@ QEMU进入调试，启动调试服务器，默认端口1234
 
 启动调试客户端
 
-.. code-block::
+.. code-block:: console
 
-	aarch64-none-elf-gdb target/aarch64-unknown-none-softfloat/debug/rui_armv8_os
+	$ aarch64-none-elf-gdb target/aarch64-unknown-none-softfloat/debug/rui_armv8_os
 
 设置调试参数，开始调试
 
