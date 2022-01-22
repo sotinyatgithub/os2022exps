@@ -13,6 +13,7 @@
 
    exp1/index
    exp2/index
+   exp3/index
 
 
 `blogos <https://github.com/phil-opp/blog_os>`_  是Philipp Oppermann用rust语言编写的面向x86架构的简单操作系统，其对应的指导书是 `Writing an OS in Rust <https://os.phil-opp.com/>`_，这里有 `中文版本 <https://github.com/rustcc/writing-an-os-in-rust>`_。
