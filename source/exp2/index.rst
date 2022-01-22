@@ -10,8 +10,46 @@ print函数是学习几乎任何一种软件开发语言时最先学习使用的
 
 本系列实验都会在QEMU模拟器上完成，首先来了解一下模拟的机器信息。可以通过下列两种方法：
 
-1. 查看QEMU关于 `virt的描述 <https://www.qemu.org/docs/master/system/arm/virt.html>`_ ， 或者查看QEMU的源码，如github上的 `virt.h <https://github.com/qemu/qemu/blob/master/include/hw/arm/virt.h>`_ 和 `virt.c <https://github.com/qemu/qemu/blob/master/hw/arm/virt.c>`_。
+1. 查看QEMU关于 `virt的描述 <https://www.qemu.org/docs/master/system/arm/virt.html>`_ ， 或者查看QEMU的源码，如github上的 `virt.h <https://github.com/qemu/qemu/blob/master/include/hw/arm/virt.h>`_ 和 `virt.c <https://github.com/qemu/qemu/blob/master/hw/arm/virt.c>`_。virt.c中可见如下有关内存映射的内容。
    
+.. code-block:: c
+
+  static const MemMapEntry base_memmap[] = {
+      /* Space up to 0x8000000 is reserved for a boot ROM */
+      [VIRT_FLASH] =              {          0, 0x08000000 },
+      [VIRT_CPUPERIPHS] =         { 0x08000000, 0x00020000 },
+      /* GIC distributor and CPU interfaces sit inside the CPU peripheral space */
+      [VIRT_GIC_DIST] =           { 0x08000000, 0x00010000 },
+      [VIRT_GIC_CPU] =            { 0x08010000, 0x00010000 },
+      [VIRT_GIC_V2M] =            { 0x08020000, 0x00001000 },
+      [VIRT_GIC_HYP] =            { 0x08030000, 0x00010000 },
+      [VIRT_GIC_VCPU] =           { 0x08040000, 0x00010000 },
+      /* The space in between here is reserved for GICv3 CPU/vCPU/HYP */
+      [VIRT_GIC_ITS] =            { 0x08080000, 0x00020000 },
+      /* This redistributor space allows up to 2*64kB*123 CPUs */
+      [VIRT_GIC_REDIST] =         { 0x080A0000, 0x00F60000 },
+      [VIRT_UART] =               { 0x09000000, 0x00001000 },
+      [VIRT_RTC] =                { 0x09010000, 0x00001000 },
+      [VIRT_FW_CFG] =             { 0x09020000, 0x00000018 },
+      [VIRT_GPIO] =               { 0x09030000, 0x00001000 },
+      [VIRT_SECURE_UART] =        { 0x09040000, 0x00001000 },
+      [VIRT_SMMU] =               { 0x09050000, 0x00020000 },
+      [VIRT_PCDIMM_ACPI] =        { 0x09070000, MEMORY_HOTPLUG_IO_LEN },
+      [VIRT_ACPI_GED] =           { 0x09080000, ACPI_GED_EVT_SEL_LEN },
+      [VIRT_NVDIMM_ACPI] =        { 0x09090000, NVDIMM_ACPI_IO_LEN},
+      [VIRT_PVTIME] =             { 0x090a0000, 0x00010000 },
+      [VIRT_SECURE_GPIO] =        { 0x090b0000, 0x00001000 },
+      [VIRT_MMIO] =               { 0x0a000000, 0x00000200 },
+      /* ...repeating for a total of NUM_VIRTIO_TRANSPORTS, each of that size */
+      [VIRT_PLATFORM_BUS] =       { 0x0c000000, 0x02000000 },
+      [VIRT_SECURE_MEM] =         { 0x0e000000, 0x01000000 },
+      [VIRT_PCIE_MMIO] =          { 0x10000000, 0x2eff0000 },
+      [VIRT_PCIE_PIO] =           { 0x3eff0000, 0x00010000 },
+      [VIRT_PCIE_ECAM] =          { 0x3f000000, 0x01000000 },
+      /* Actual RAM size depends on initial RAM and device memory settings */
+      [VIRT_MEM] =                { GiB, LEGACY_RAMLIMIT_BYTES },
+  };
+
 2. 通过QEMU导出设备树 
 
   1. 安装设备树格式转换工具
@@ -221,7 +259,7 @@ print函数是学习几乎任何一种软件开发语言时最先学习使用的
 我们可以利用print!宏来打印一个文本banner让我们写的OS显得专业一点😁。 `manytools.org <https://manytools.org/hacker-tools/ascii-banner/>`_ 可以创建ascii banner，选择你喜欢的样式和文字，然后在main.rs的not_main函数中通过print!宏输出。
 
 .. code-block:: rust
-  
+
   #[no_mangle]
   pub extern "C" fn not_main() {
     // ...
