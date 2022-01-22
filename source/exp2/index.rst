@@ -221,9 +221,7 @@ print函数是学习几乎任何一种软件开发语言时最先学习使用的
 我们可以利用print!宏来打印一个文本banner让我们写的OS显得专业一点😁。 `manytools.org <https://manytools.org/hacker-tools/ascii-banner/>`_ 可以创建ascii banner，选择你喜欢的样式和文字，然后在main.rs的not_main函数中通过print!宏输出。
 
 .. code-block:: rust
-
-  mod uart_console;
-
+  
   #[no_mangle]
   pub extern "C" fn not_main() {
     // ...
