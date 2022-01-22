@@ -9,32 +9,44 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 如果你已经安装了一个版本的Rust，需补充安装相关工具： 
-::
+
+.. code-block::
+
 	cargo install cargo-binutils rustfilt
 
 如果你想要全新安装：
-::
+
+.. code-block::
 
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 	source $HOME/.cargo/env
 	cargo install cargo-binutils rustfilt
 
 如果你想安装指定的版本，如nightly-2021-11-20：
-::
+
+.. code-block::
+
 	rustup install nightly-2021-11-20
 
 
 .. attention:: 
 	本系列实验需要nightly版本，可以将rust默认设置为stable或nightly版本
-	::
+
+	.. code-block::
+
 		rustup default stable
 		rustup default nightly
+
 	或者仅将当前项目设为nightly
-	::
+
+	.. code-block::
+
 		rustup override set nightly
 
 查看当前项目使用的rust版本
+
 ::
+
 	rustc -V
 
 .. hint::
@@ -44,11 +56,15 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 列出 rust支持的目标三元组（CPU架构、平台供应者、操作系统和应用程序二进制接口ABI）
-:: 
+
+.. code-block:: 
+
 	rustup target list
 
 增加 armv8支持
-:: 
+
+.. code-block:: 
+
 	rustup target add aarch64-unknown-none-softfloat
 
 
@@ -62,14 +78,18 @@
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Linux
-::
+
+.. code-block::
+
 	wget https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz 
 	tar -xf gcc-arm-10* 
 	cp gcc-arm-10*/bin/aarch64-none-elf-objdump gcc-arm-10*/bin/aarch64-none-elf-readelf gcc-arm-10*/bin/aarch64-none-elf-nm /usr/local/bin/ 
 	rm -rf gcc-arm-10*
 
 Mac
-::
+
+.. code-block::
+
 	brew tap SergioBenitez/osxct
 	brew install aarch64-none-elf
 
@@ -81,7 +101,9 @@ Mac
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 创建新项目：
-::
+
+.. code-block::
+
 	cargo new rui_armv8_os --bin --edition 2021
 
 .. tip::
@@ -140,7 +162,7 @@ panic.rs源码
 
 start.s源码
 
-.. code-block:: asm
+.. code-block:: 
     :linenos:
 
 	.globl _start
@@ -161,12 +183,14 @@ start.s源码
 		hvc     #0	
 
 .. note::
-	_start设置好栈指针后，通过bl not_main跳转到main.rs中对应函数。 
+	_start标号开始设置好栈指针后，通过bl not_main跳转到main.rs中对应函数。 
 
 	LD_STACK_PTR是全局符号，在下面的aarch64-qemu.ld中定义。
 
-创建链接文件aarch64-qemu.ld
-::
+在项目目录下创建链接文件aarch64-qemu.ld
+
+.. code-block::
+
 	ENTRY(_start)
 	SECTIONS
 	{
@@ -187,14 +211,10 @@ start.s源码
 
 	通过 . = 0x40080000; 将程序安排在内存位置0x40080000开始的地方。
 
-	链接脚本中的符号LD_STACK_PTR是全局符号，可以在程序中使用，这里定义的是栈底位置。
+	链接脚本中的符号LD_STACK_PTR是全局符号，可以在程序中使用（如start.s中），这里定义的是栈底的位置。
 
 
 .. note::
-	gcc -v参数可以看到在编译 C 代码时，分别调用了 CPP、CC1、AS、COLLECT2 这四类编译工具，分别对应 预编译、编译、汇编、链接 这四个过程。
-
-	在编译的时候尤其是在编写 Makefile 脚本的时候，需要注意 CPP 是预编译器，而不是 C++ 的意思，C++ 通常用 CXX 表示，这里有很多人会搞混。
-
 	链接脚本中除了组织各个段之外，还可以定义符号，链接脚本中定义的符号被添加到全局符号中
 
 	symbol = expression ; symbol += expression ;第一个表达式表示定义一个符号，第二个表达式对符号值进行操作，中间的空格是必须的
@@ -209,7 +229,8 @@ start.s源码
 	链接脚本对理解操作系统的实现非常重要，所以应及早熟悉。
 
 配置Cargo.toml
-::
+
+.. code-block::
 
 	[package]
 	name = "rui_armv8_os"
@@ -239,8 +260,9 @@ start.s源码
 	[profile.release]
 	panic = "abort"
 
-创建aarch64-unknown-none-softfloat.json
-::
+在项目目录下创建aarch64-unknown-none-softfloat.json，配置目标平台相关参数
+
+.. code-block::
 
 	{
 	  "abi-blacklist": [
@@ -275,16 +297,22 @@ start.s源码
 	  "vendor": ""
 	}
 
+.. hint::
+	pre-link-args中指定了我们先前创建的链接脚本。 
 
 编译运行
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 编译
-::
+
+.. code-block::
+
 	cargo build --target aarch64-unknown-none-softfloat
 
 运行
-::
+
+.. code-block::
+
 	qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os
 
 
@@ -298,7 +326,9 @@ GDB简单调试方法
 编译成功后就可以运行，这需要使用前面安装的QEMU模拟器。此外，为了查找并修正bug，我们需要使用调试工具。
 
 QEMU进入调试，启动调试服务器，默认端口1234
-::
+
+.. code-block::
+
 	qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os -S -s
 
 .. note::
@@ -309,11 +339,15 @@ QEMU进入调试，启动调试服务器，默认端口1234
 	-s shorthand for -gdb tcp::1234
 
 启动调试客户端
-::
+
+.. code-block::
+
 	aarch64-none-elf-gdb target/aarch64-unknown-none-softfloat/debug/rui_armv8_os
 
 设置调试参数，开始调试
-::
+
+.. code-block::
+
 	(gdb) target remote localhost:1234 
 	(gdb) disassemble 
 	(gdb) n
@@ -324,7 +358,9 @@ QEMU进入调试，启动调试服务器，默认端口1234
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 打开一个.rs文件，点击 vscode左侧的运行和调试按钮，弹出对话框选择创建 launch.json文件，增加如下配置：
-::
+
+.. code-block::
+
 	{
 
 	    "name": "aarch64-gdb",
