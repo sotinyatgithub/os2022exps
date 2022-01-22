@@ -21,6 +21,7 @@
    exp1/index
    exp2/index
    exp3/index
+   exp4/index
 
 
 .. Indices and tables
