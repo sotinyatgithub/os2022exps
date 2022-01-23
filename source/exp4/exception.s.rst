@@ -25,9 +25,6 @@ exception.s
     .extern el0_32_error
 
 
-
-    // https://github.com/rust-embedded/rust-raspberrypi-OS-tutorials/blob/master/11_exceptions_part1_groundwork/src/_arch/aarch64/exception.s
-    // https://github.com/lowenware/leos-kernel/blob/d0d8eb8757b969f412bf0663727165589cbaf480/src/arch/aarch64/exceptions.s
     //--------------------------------------------------------------------------------------------------
     // Definitions
     //--------------------------------------------------------------------------------------------------
@@ -83,8 +80,6 @@ exception.s
     //------------------------------------------------------------------------------
     // The exception vector table.
     //------------------------------------------------------------------------------
-    // https://developer.arm.com/documentation/100933/0100/AArch64-exception-vector-table
-    // AArch64 exception vector table
     /** When an exception occurs, the processor must execute handler code that corresponds to the exception. 
     The location in memory where the handler is stored is called the exception vector. In the ARM architecture, 
     exception vectors are stored in a table, called the exception vector table.

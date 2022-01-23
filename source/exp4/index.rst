@@ -21,27 +21,35 @@ Arm的中断系统
 
 .. image:: ARMGIC.png
 
-其中nIRQ是普通中断，nFIQ是快速中断。 Arm采用的中断控制器叫做gic，即general interrupt controller。gic包括多个版本，如gicv1（已弃用），gicv2，gicv3，gicv4。简单起见，我们实验将选用gicv2版本。
+其中nIRQ是普通中断，nFIQ是快速中断。 Arm采用的中断控制器叫做GIC，即general interrupt controller。gic包括多个版本，如GICv1（已弃用），GICv2，GICv3，GICv4。简单起见，我们实验将选用GICv2版本。
 
-中断触发方式
-^^^^^^^^^^^^^^^^^^^^^
+为了配置好gicv2中断控制器，与pl011串口一样，我们需要阅读其技术参考手册。访问Arm官网在 `这里 <https://developer.arm.com/documentation/ihi0048/latest>`_ 下载ARM Generic Interrupt Controller Architecture Specification - version 2.0 的pdf版本。
 
-中断触发方式，包含以下两种方式：
+.. image:: gicv2-logic.png
 
-- edge-triggered: 边沿触发，当中断源产生一个边沿，中断有效
-- level-sensitive：电平触发，当中断源为指定电平，中断有效
+从上图（来源于ARM Generic Interrupt Controller Architecture Specification - version 2.0中的Chapter 2 GIC Partitioning）可以看出：
 
-中断类型
-^^^^^^^^^^^^^^^^^^^^^
-中断类型分为以下几类：
+- GICv2 最多支持8个核的中断管理。
+- GIC包括两大主要部分（由图中蓝色虚竖线分隔），分别是：
 
-- PPI：（private peripheral interrupt），私有外设中断，该中断来源于外设，但是该中断只对指定的core有效。
+  - Distributor，其通过"GICD_"开头的寄存器进行控制（蓝色实矩形框标示）
+  - CPU Interface，其通过"GICC_"开头的寄存器进行控制（蓝色实矩形框标示）
 
-- SPI：（shared peripheral interrupt），共享外设中断，该中断来源于外设，但是该中断可以对所有的core有效。
 
-- SGI：（software-generated interrupt），软中断，软件产生的中断，用于给其他的core发送中断信号
+- 中断类型分为以下几类（由图中红色虚线椭圆标示）：
 
-- virtual interrupt：虚拟中断，用于支持虚拟机
+  - SPI：（shared peripheral interrupt），共享外设中断。该中断来源于外设，通过Distributor分发给特定的core，其中断编号为32-1019。从图中可以看到所有核共享SPI。
+  - PPI：（private peripheral interrupt），私有外设中断。该中断来源于外设，但只对指定的core有效，中断信号只会发送给指定的core，其中断编号为16-31。从图中可以看到每个core都有自己的PPI。
+  - SGI：（software-generated interrupt），软中断。软件产生的中断，用于给其他的core发送中断信号，其中断编号为0-15。
+  - virtual interrupt，虚拟中断，用于支持虚拟机。图中也可以看到，因为我们暂时不关心，所以没有标注。
+  - 此外可以看到(FIQ, IRQ)可通过b进行旁路，我们也不关心。如感兴趣可以查看技术手册了解细节。
+
+此外，由ARM Generic Interrupt Controller Architecture Specification - version 2.0 (section 1.4.2)可知，外设中断可由两种方式触发：
+
+- edge-triggered: 边沿触发，当检测到中断信号上升沿时中断有效。
+- level-sensitive：电平触发，当中断源为指定电平时中断有效。
+
+
 
 中断优先级
 ^^^^^^^^^^^^^^^^^^^^^
@@ -49,15 +57,7 @@ Arm的中断系统
 
 当cpu在响应低优先级中断时，如果此时来了高优先级中断，那么高优先级中断会抢占低优先级中断，而被处理器响应。
 
-中断号
-^^^^^^^^^^^^^^^^^^^^^
 
-为了方便对中断的管理，gic为每个中断，分配了一个中断号，也就是interrupt ID。对于中断号，gic也进行了分配：
-
-- ID0-ID15，分配给SGI
-- ID16-ID31，分配给PPI
-- ID32-ID1019分配给SPI
-- 其他
 
 
  `exception.s <./exception.s.html>`_
