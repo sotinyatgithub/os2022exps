@@ -21,7 +21,7 @@ Arm的中断系统
 
 .. image:: ARMGIC.png
 
-其中nIRQ是普通中断，nFIQ是快速中断。 Arm采用的中断控制器叫做gic，即general interrupt controller。gic包括多个版本，如gicv1（已弃用），gicv2，gicv3，gicv4。简单起见，我们实验将选择gicv2版本。
+其中nIRQ是普通中断，nFIQ是快速中断。 Arm采用的中断控制器叫做gic，即general interrupt controller。gic包括多个版本，如gicv1（已弃用），gicv2，gicv3，gicv4。简单起见，我们实验将选用gicv2版本。
 
 中断触发方式
 ^^^^^^^^^^^^^^^^^^^^^
