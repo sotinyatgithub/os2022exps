@@ -406,7 +406,7 @@ ARMv8 架构定义了两种执行状态(Execution States)，AArch64 和 AArch32�
       catch(ctx, EL1_SP0_SYNC);
   }
 
-你需要为所有的中断类型定义类似函数。
+你需要为异常向量表中其他所有的中断类型定义类似函数。
 
 此外，我们还要在 start.s 中载入异常向量表 ``exception_vector_table``
 
