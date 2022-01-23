@@ -22,6 +22,8 @@
    exp2/index
    exp3/index
    exp4/index
+   exp5/index
+   exp6/index
    errs/index
 
 
