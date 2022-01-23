@@ -180,7 +180,7 @@ start.s源码
 		bl      not_main
 
 
-	.equ PSCI_SYSTEM_OFF, 0x84000008
+	.equ PSCI_SYSTEM_OFF, 0x84000002
 	.globl system_off
 	system_off:
 		ldr     x0, =PSCI_SYSTEM_OFF
@@ -190,6 +190,8 @@ start.s源码
 	_start标号开始设置好栈指针后，通过bl not_main跳转到main.rs中对应函数。 
 
 	LD_STACK_PTR是全局符号，在下面的aarch64-qemu.ld中定义。
+
+	关于PSCI_SYSTEM_OFF参见 [psci]_ 。
 
 在项目目录下创建链接文件aarch64-qemu.ld
 
@@ -416,4 +418,5 @@ qemu执行结果
 .. image:: qemu-result.png
 
 
+.. [psci] https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/psci.txt
 
