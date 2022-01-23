@@ -24,7 +24,6 @@ exception.s
     .extern el0_32_fiq
     .extern el0_32_error
 
-
     //--------------------------------------------------------------------------------------------------
     // Definitions
     //--------------------------------------------------------------------------------------------------
@@ -36,7 +35,6 @@ exception.s
     .section .text.exceptions
 
     .macro EXCEPTION_VECTOR handler
-
         sub sp, sp, #CONTEXT_SIZE
 
     // store general purpose registers
@@ -116,13 +114,12 @@ exception.s
 
     .org 0x0080
         EXCEPTION_VECTOR el1_sp0_irq
-    //0x80 + 0x80 = 0x100 即每个0x80字节
+    
     .org 0x0100
         EXCEPTION_VECTOR el1_sp0_fiq
 
     .org 0x0180
         EXCEPTION_VECTOR el1_sp0_error
-
 
     .org 0x0200
         EXCEPTION_VECTOR el1_sync
@@ -136,7 +133,6 @@ exception.s
     .org 0x0380
         EXCEPTION_VECTOR el1_error
 
-
     .org 0x0400
         EXCEPTION_VECTOR el0_sync
 
@@ -148,7 +144,6 @@ exception.s
 
     .org 0x0580
         EXCEPTION_VECTOR el0_error
-
 
     .org 0x0600
         EXCEPTION_VECTOR el0_32_sync

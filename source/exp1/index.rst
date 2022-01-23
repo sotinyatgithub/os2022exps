@@ -171,7 +171,6 @@ start.s源码
 
 	.globl _start
 	.extern LD_STACK_PTR
-
 	.section ".text.boot"
 
 	_start:
@@ -179,12 +178,12 @@ start.s源码
 		mov     sp, x30
 		bl      not_main
 
-
 	.equ PSCI_SYSTEM_OFF, 0x84000002
 	.globl system_off
 	system_off:
 		ldr     x0, =PSCI_SYSTEM_OFF
 		hvc     #0	
+
 
 .. note::
 	_start标号开始设置好栈指针后，通过bl not_main跳转到main.rs中对应函数。 
