@@ -166,7 +166,7 @@ panic.rs源码
 
 start.s源码
 
-.. code-block:: 
+.. code-block:: asm
     :linenos:
 
 	.globl _start
