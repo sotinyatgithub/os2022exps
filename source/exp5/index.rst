@@ -298,17 +298,19 @@ tock-registers库
     unsafe extern "C" fn el1_irq(ctx: &mut ExceptionCtx) {
         // reads this register to obtain the interrupt ID of the signaled interrupt. 
         // This read acts as an acknowledge for the interrupt.
+        // 中断确认
         let value: u32 = ptr::read_volatile(GICC_IAR);
         let irq_num: u32 = value & 0x1ff;
         let core_num: u32 = value & 0xe00;
 
-        // 处理中断
+        // 实际处理中断
         handle_irq_lines(ctx, core_num, irq_num);
         // catch(ctx, EL1_IRQ);
 
         // A processor writes to this register to inform the CPU interface either:
         // • that it has completed the processing of the specified interrupt
         // • in a GICv2 implementation, when the appropriate GICC_CTLR.EOImode bit is set to 1, to indicate that the interface should perform priority drop for the specified interrupt.
+        // 标记中断完成，清除相应中断位
         ptr::write_volatile(GICC_EOIR, core_num | irq_num);
         clear(irq_num);
     }
