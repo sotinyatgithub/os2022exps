@@ -91,7 +91,8 @@ virt机器关机原理
             // 清除中断信号
             pl061r.ic.set(pl061r.ie.get());
             // 关机
-            asm!("HLT #0xF000");
+            asm!("mov w0, #0x18");
+            asm!("hlt #0xF000");
         }
     }
 
@@ -108,7 +109,7 @@ virt机器关机原理
         }
     }    
 
-.. note:: 在 ``handle_gpio_irq`` 里通过内联汇编执行了指令 ``HLT #0xF000``，这用到了 Arm 的 Semihosting 功能，可以参考 `这里 <https://developer.arm.com/documentation/100863/0300/The-semihosting-interface>`_。 
+.. note:: 在 ``handle_gpio_irq`` 里通过内联汇编执行了指令 ``hlt #0xF000``，这用到了 Arm 的 Semihosting 功能，可以参考 `这里 <https://developer.arm.com/documentation/100863/0300/The-semihosting-interface>`_ 或者 `这里 <https://developer.arm.com/documentation/100863/0300/Semihosting-operations/SYS-EXIT--0x18-?lang=en>`_。 
     
     Semihosting 的作用：Semihosting 能够让 bare-metal 的 ARM 设备通过拦截指定的 SVC 指令，在连操作系统都没有的环境中实现 POSIX 中的许多标准函数，比如 printf、scanf、open、read、write 等等。这些 IO 操作将被 Semihosting 协议转发到 Host 主机上，然后由主机代为执行。
 
