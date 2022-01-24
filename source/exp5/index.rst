@@ -6,7 +6,7 @@ QEMU的virt机器默认没有键盘作为输入设备，但当我们执行QEMU�
 tock-registers库
 --------------------------
 
-在 :doc:`../exp4/index` 中，针对GICD，GICC，TIMER等硬件我们定义了大量的常量和寄存器值，这在使用时很不方便也容易出错。因此我们决定使用 tock-registers 库。
+在 :doc:`../exp4/index` 中，针对GICD，GICC，TIMER等硬件我们定义了大量的常量和寄存器值，这在使用时过于繁琐也容易出错。因此我们决定采用 tock-registers 库 [1]_。
 
 
 在 Cargo.toml 中的 ``[dependencies]`` 节中加入依赖：
@@ -16,7 +16,34 @@ tock-registers库
     tock-registers = { version = "0.7.x", default-features = false, features = ["register_types"], optional = true }
 
 
-为了不至于使 uart_console.rs 文件过长，我们选择重构 uart_console.rs。首先创建 src/uart_console 目录，并将原 uart_console.rs 更名为 mod.rs ，且置于 src/uart_console 目录下， 最后新建 src/uart_console/pl011.rs 文件，然后依据tock_registers库的要求对pl011所涉及到的寄存器 [1]_ 进行描述，内容为：
+为了不至于使 uart_console.rs 文件过长，我们选择重构 uart_console.rs。首先创建 src/uart_console 目录，并将原 uart_console.rs 更名为 mod.rs ，且置于 src/uart_console 目录下， 最后新建 src/uart_console/pl011.rs 文件。目录结构看起来像这样：
+
+.. code-block:: 
+
+    .
+    |____virt.dts
+    |____virt.dtb
+    |____Cargo.toml
+    |____Cargo.lock
+    |____.cargo
+    | |____config.toml
+    |____aarch64-qemu.ld
+    |____.vscode
+    | |____launch.json
+    |____aarch64-unknown-none-softfloat.json
+    |____src
+    | |____panic.rs
+    | |____start.s
+    | |____interrupts.rs
+    | |____main.rs
+    | |____uart_console
+    | | |____mod.rs
+    | | |____pl011.rs
+    | |____exception.s
+
+
+
+然后依据tock_registers库的要求对pl011所涉及到的寄存器 [2]_ 进行描述，内容为：
 
 .. code-block:: rust
 
@@ -155,35 +182,10 @@ tock-registers库
 
 看起来好像比 :doc:`../exp4/index` 中对应的寄存器描述部分要复杂，但如果你熟悉了之后，基本上可以依据技术参考手册中的寄存器描述无脑写了。
 
-.. hint:: register_structs 宏最后需加上(0x** => @END)，表示结束。
+.. hint:: register_bitfields 宏按照寄存器的位结构进行描述，注意最后要加分号“;”，只要注册自己想处理的位即可。
+    
+    register_structs 宏最后需加上(0x** => @END)，表示结束。
 
-    register_bitfields 宏按照寄存器的位结构进行描述，注意最后要加分号“;”，只要注册自己想处理的位即可。
-
-至此，目录结构看起来像这样：
-
-.. code-block:: 
-
-    .
-    |____virt.dts
-    |____virt.dtb
-    |____Cargo.toml
-    |____Cargo.lock
-    |____.cargo
-    | |____config.toml
-    |____aarch64-qemu.ld
-    |____.gitignore
-    |____.vscode
-    | |____launch.json
-    |____aarch64-unknown-none-softfloat.json
-    |____src
-    | |____panic.rs
-    | |____start.s
-    | |____interrupts.rs
-    | |____main.rs
-    | |____uart_console
-    | | |____mod.rs
-    | | |____pl011.rs
-    | |____exception.s
 
 
 数据接收中断
@@ -198,8 +200,6 @@ tock-registers库
     pub mod pl011;
     use pl011::*;
 
-    // const PL011REGS: *mut PL011Regs = (0x08000000) as *mut PL011Regs;
-
     lazy_static! {
         /// A global `Writer` instance that can be used for printing to the VGA text buffer.
         ///
@@ -212,27 +212,46 @@ tock-registers库
 .. code-block:: rust
 
     pub fn new() -> Writer{
+        
         unsafe {
+            // pl011 device registers
+            let pl011r: &PL011Regs = &*PL011REGS;
+
             // 禁用pl011
-            (*PL011REGS).cr.write(UARTCR::TXE::Disabled + UARTCR::RXE::Disabled + UARTCR::UARTEN::Disabled);
+            pl011r.cr.write(UARTCR::TXE::Disabled + UARTCR::RXE::Disabled + UARTCR::UARTEN::Disabled);
             // 清空中断状态
-            (*PL011REGS).icr.write(UARTICR::ALL::Clear);
+            pl011r.icr.write(UARTICR::ALL::Clear);
             // 设定中断mask，需要使能的中断
-            (*PL011REGS).imsc.write(UARTIMSC::RXIM::Enabled);
+            pl011r.imsc.write(UARTIMSC::RXIM::Enabled);
             // IBRD = UART_CLK / (16 * BAUD_RATE)
             // FBRD = ROUND((64 * MOD(UART_CLK,(16 * BAUD_RATE))) / (16 * BAUD_RATE))
             // UART_CLK = 24M
             // BAUD_RATE = 115200
-            (*PL011REGS).ibrd.write(UARTIBRD::IBRD.val(13));
-            (*PL011REGS).fbrd.write(UARTFBRD::FBRD.val(1));
+            pl011r.ibrd.write(UARTIBRD::IBRD.val(13));
+            pl011r.fbrd.write(UARTFBRD::FBRD.val(1));
             // 8N1 FIFO enable
-            (*PL011REGS).lcr_h.write(UARTLCR_H::WLEN::EightBit + UARTLCR_H::PEN::Disabled + UARTLCR_H::STP2::Stop1 
+            pl011r.lcr_h.write(UARTLCR_H::WLEN::EightBit + UARTLCR_H::PEN::Disabled + UARTLCR_H::STP2::Stop1 
                 + UARTLCR_H::FEN::Enabled);
             // enable pl011
-            (*PL011REGS).cr.write(UARTCR::UARTEN::Enabled + UARTCR::RXE::Enabled + UARTCR::TXE::Enabled);
+            pl011r.cr.write(UARTCR::UARTEN::Enabled + UARTCR::RXE::Enabled + UARTCR::TXE::Enabled);
         }
 
         Writer
+    }
+
+修改 ``write_byte`` 函数使用我们通过宏描述的寄存器：
+
+.. code-block:: rust
+
+    pub fn write_byte(&mut self, byte: u8) {
+        // const UART0: *mut u8 = 0x0900_0000 as *mut u8;
+        unsafe {
+            // pl011 device registers
+            let pl011r: &PL011Regs = &*PL011REGS;
+            
+            // ptr::write_volatile(UART0, byte);
+            pl011r.dr.write(UARTDR::DATA.val(byte as u32));
+        }
     }
 
 在 src/interrupts.rs 中的 ``init_gicv2`` 函数中对UART的数据接收中断进行初始化：
@@ -315,5 +334,5 @@ tock-registers库
         clear(irq_num);
     }
 
-
-.. [1] https://developer.arm.com/documentation/ddi0183/g/programmers-model/summary-of-registers?lang=en
+.. [1] https://github.com/tock/tock/tree/master/libraries/tock-register-interface
+.. [2] https://developer.arm.com/documentation/ddi0183/g/programmers-model/summary-of-registers?lang=en

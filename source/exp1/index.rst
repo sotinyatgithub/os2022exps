@@ -339,11 +339,13 @@ QEMU进入调试，启动调试服务器，默认端口1234
 	$ qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os -S -s
 
 .. note::
-	查看相关参数的作用在命令行执行： ``qemu-system-aarch64 --help``， 其中
+	qemu的参数说明：
 
 	-S freeze CPU at startup (use 'c' to start execution)
 
 	-s shorthand for -gdb tcp::1234
+
+	查看相关参数的作用可在命令行执行： ``qemu-system-aarch64 --help``， 
 
 启动调试客户端
 
