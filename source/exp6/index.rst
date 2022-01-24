@@ -130,4 +130,3 @@ virt机器关机原理
 
 .. [1] https://www.kernel.org/doc/Documentation/devicetree/bindings/gpio/gpio.txt
 .. [2] https://www.kernel.org/doc/Documentation/devicetree/bindings/gpio/pl061-gpio.txt
-
