@@ -302,12 +302,15 @@ tock-registers库
 
         // crate::print!("R");
         unsafe{
-            let mut flag = (*PL011REGS).fr.read(UARTFR::RXFE);
+            // pl011 device registers
+            let pl011r: &PL011Regs = &*PL011REGS;
+
+            let mut flag = pl011r.fr.read(UARTFR::RXFE);
             while flag != 1 {
-                let value = (*PL011REGS).dr.read(UARTDR::DATA);
+                let value = pl011r.dr.read(UARTDR::DATA);
             
                 crate::print!("{}", value as u8 as char);
-                flag = (*PL011REGS).fr.read(UARTFR::RXFE);
+                flag = pl011r.fr.read(UARTFR::RXFE);
             }
         }
     }        
