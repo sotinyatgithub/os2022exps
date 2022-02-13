@@ -310,17 +310,34 @@ start.s源码
 编译运行
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-编译
+- 编译
 
 .. code-block:: console
 
 	$ cargo build --target aarch64-unknown-none-softfloat
 
-运行
+或者在项目目录下新建 .cargo/config.toml，设定编译目标和参数如下
+
+.. code-block:: 
+
+	[build]
+	target = "aarch64-unknown-none-softfloat"
+	rustflags = ["-C","link-arg=-Taarch64-qemu.ld", "-C", "target-cpu=cortex-a53", "-D", "warnings"]
+
+然后直接执行
+
+.. code-block:: console
+
+	$ cargo build 
+	
+
+- 运行
 
 .. code-block:: console
 
 	$ qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os
+
+
 
 
 
