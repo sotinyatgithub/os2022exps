@@ -126,8 +126,9 @@ virt机器关机原理
 
 .. image:: poweroff.png
 
-
+.. hint::  在 QEMU 执行时可以通过在窗口按键 ctrl + a, c 进入 QEMU Monitor ，在 QEMU Monitor 中键入 help 来获取帮助，或者参考这里 [3]_ 。
 
 
 .. [1] https://www.kernel.org/doc/Documentation/devicetree/bindings/gpio/gpio.txt
 .. [2] https://www.kernel.org/doc/Documentation/devicetree/bindings/gpio/pl061-gpio.txt
+.. [3] https://qemu.readthedocs.io/en/latest/system/monitor.html
