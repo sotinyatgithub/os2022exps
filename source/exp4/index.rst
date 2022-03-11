@@ -475,6 +475,11 @@ ARMv8 架构定义了两种执行状态(Execution States)，AArch64 和 AArch32�
 
 .. tip:: mrs类指令阅读技巧： MRS（Move to Register from State register）
 
+.. note:: 
+
+    汇编语法可以参考 GNU ARM Assembler Quick Reference [5]_ 和 Arm Architecture Reference Manual Armv8 (Chapter C3 A64 Instruction Set Overview) [6]_
+
+    关于rust内联汇编的相关知识可以参考 Inline assembly [7]_ 和 内联汇编中Clobbers的用途到底是什么 [8]_
 
 
 
@@ -486,6 +491,9 @@ ARMv8 架构定义了两种执行状态(Execution States)，AArch64 和 AArch32�
 .. [2] https://developer.arm.com/documentation/den0024/a/AArch64-Exception-Handling/Synchronous-and-asynchronous-exceptions
 .. [3] https://developer.arm.com/documentation/den0024/a/AArch64-Exception-Handling/AArch64-exception-table
 .. [4] https://developer.arm.com/documentation/den0024/a/ARMv8-Registers/AArch64-special-registers/Stack-pointer
-
+.. [5] https://www.ic.unicamp.br/~celio/mc404-2014/docs/gnu-arm-directives.pdf
+.. [6] https://developer.arm.com/documentation/ddi0487/gb
+.. [7] https://doc.rust-lang.org/reference/inline-assembly.html#register-operands
+.. [8] https://cloud.tencent.com/developer/article/1520799
 
 

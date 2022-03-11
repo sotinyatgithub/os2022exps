@@ -337,7 +337,7 @@ start.s源码
 
 	$ qemu-system-aarch64 -machine virt -m 1024M -cpu cortex-a53 -nographic -kernel target/aarch64-unknown-none-softfloat/debug/rui_armv8_os
 
-
+当然，你也可以使用 cargo run 来运行，但同样需要首先在 .cargo/config.toml 中进行配置，请自行查找资料。
 
 
 

@@ -156,6 +156,9 @@ In practice, such a simple translation process severely limits how finely you ca
 
     汇编语法可以参考 GNU ARM Assembler Quick Reference [5]_ 和 Arm Architecture Reference Manual Armv8 (Chapter C3 A64 Instruction Set Overview) [6]_
 
+    关于rust内联汇编的相关知识可以参考 Inline assembly [7]_ 和 内联汇编中Clobbers的用途到底是什么 [8]_
+
+
 在上面的代码中，我们使用了LD_TTBR0_BASE和LD_TTBR1_BASE两个符号，这需要在链接脚本中定义。
 
 .. code-block:: 
@@ -327,6 +330,8 @@ identity mapping 毕竟过于简单，在实际的系统上并不实用，但也
 .. [4] https://developer.arm.com/documentation/den0024/a/The-Memory-Management-Unit/Translation-tables-in-ARMv8-A/AArch64-descriptor-format
 .. [5] https://www.ic.unicamp.br/~celio/mc404-2014/docs/gnu-arm-directives.pdf
 .. [6] https://developer.arm.com/documentation/ddi0487/gb
+.. [7] https://doc.rust-lang.org/reference/inline-assembly.html#register-operands
+.. [8] https://cloud.tencent.com/developer/article/1520799
 
 
 
