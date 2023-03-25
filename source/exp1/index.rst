@@ -30,7 +30,7 @@
 
 
 .. attention:: 
-	本系列实验需要nightly版本，可以将rust默认设置为stable或nightly版本
+	本系列实验需要nightly版本，可以将rust默认设置为stable或nightly版本。由于rust特性一直在发展，最好选择与nightly-2021-11-20比较接近的版本，而不是最新版和稳定版。
 
 	.. code-block:: console
 
