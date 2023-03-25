@@ -83,7 +83,7 @@ Linux
 
 	$ wget https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz 
 	$ tar -xf gcc-arm-10* 
-	$ cp gcc-arm-10*/bin/aarch64-none-elf-objdump gcc-arm-10*/bin/aarch64-none-elf-readelf gcc-arm-10*/bin/aarch64-none-elf-nm /usr/local/bin/ 
+	$ cp gcc-arm-10*/bin/* /usr/local/bin/ 
 	$ rm -rf gcc-arm-10*
 
 Mac
