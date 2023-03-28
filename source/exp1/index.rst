@@ -37,20 +37,21 @@
 
 	.. code-block:: console
 
-		$ rustup default stable
-		$ rustup default nightly
+		$ rustup default stable-xxx版本
+		$ rustup default nightly-xxx版本
 
 	或者仅将当前项目设为nightly
 
 	.. code-block:: console
 
-		$ rustup override set nightly
+		$ rustup override set nightly-xxx版本
 
 查看当前项目使用的rust版本
 
 .. code-block:: console
 
 	$ rustc -V
+	$ rustup show
 
 .. hint::
 	如果你使用 Visual Studio Code，强烈推荐你安装 `Rust Analyzer 扩展 <https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer>`_
