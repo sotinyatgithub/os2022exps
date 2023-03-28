@@ -31,7 +31,14 @@
 
 	$ rustup install nightly-2021-11-20
 
+查看当前项目使用的rust版本
 
+.. code-block:: console
+
+	$ rustc -V
+	$ rustup show
+
+	
 .. attention:: 
 	本系列实验需要nightly版本，可以将rust默认设置为stable或nightly版本。由于rust特性一直在发展，最好选择与nightly-2021-11-20比较接近的版本，而不是最新版和稳定版。
 
@@ -46,12 +53,7 @@
 
 		$ rustup override set nightly-xxx版本
 
-查看当前项目使用的rust版本
 
-.. code-block:: console
-
-	$ rustc -V
-	$ rustup show
 
 .. hint::
 	如果你使用 Visual Studio Code，强烈推荐你安装 `Rust Analyzer 扩展 <https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer>`_
